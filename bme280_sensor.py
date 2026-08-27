@@ -1,111 +1,43 @@
-"""
-bme280_sensor.py - Indoor Environmental Sensor Module
------------------------------------------------------
-Reads temperature, humidity, and barometric pressure from the BME280
-sensor via I2C bus using CircuitPython/Adafruit libraries.
-"""
-
 import time
-import board
-import busio
-import adafruit_bme280.advanced as adafruit_bme280
+import smbus2
+import bme280
 
-import config
+# BME280 sensor address (default address)
+address = 0x76
 
+# Initialize I2C bus
+bus = smbus2.SMBus(1)
 
-class BME280Sensor:
-    def __init__(self, i2c_address=config.BME280_I2C_ADDRESS):
-        """Initializes the I2C bus and BME280 sensor instance."""
-        self.i2c_address = i2c_address
-        self.sensor = None
-        self._init_sensor()
+# Load calibration parameters
+calibration_params = bme280.load_calibration_params(bus, address)
 
-    def _init_sensor(self):
-        """Attempts to initialize the BME280 sensor over I2C."""
-        try:
-            # Initialize I2C bus on Pi GPIO 2 (SDA) / GPIO 3 (SCL)
-            i2c = busio.I2C(board.SCL, board.SDA)
-            self.sensor = adafruit_bme280.Adafruit_BME280_I2C(i2c, address=self.i2c_address)
-            
-            # Optional: Set sea level pressure for altitude calculations if needed
-            self.sensor.sea_level_pressure = 1013.25
-            print(f"BME280 sensor successfully initialized at address 0x{self.i2c_address:02X}")
-        except Exception as error:
-            print(f"Error initializing BME280 sensor at 0x{self.i2c_address:02X}: {error}")
-            self.sensor = None
+def celsius_to_fahrenheit(celsius):
+    return (celsius * 9/5) + 32
 
-    def read_data(self):
-        """
-        Reads raw data from the sensor and converts units based on config.UNITS.
-        
-        Returns:
-            dict: {
-                'temperature': float,
-                'humidity': float,
-                'pressure': float,
-                'status': bool
-            }
-        """
-        # Retry initialization once if sensor failed during boot
-        if self.sensor is None:
-            self._init_sensor()
+while True:
+    try:
+        # Read sensor data
+        data = bme280.sample(bus, address, calibration_params)
 
-        if self.sensor is None:
-            print("Unable to read BME280: Sensor not connected or initialized.")
-            return {
-                "temperature": 0.0,
-                "humidity": 0.0,
-                "pressure": 0.0,
-                "status": False
-            }
+        # Extract temperature, pressure, and humidity
+        temperature_celsius = data.temperature
+        pressure = data.pressure
+        humidity = data.humidity
 
-        try:
-            temp_c = self.sensor.temperature
-            humidity = self.sensor.humidity
-            pressure_hpa = self.sensor.pressure
+        # Convert temperature to Fahrenheit
+        temperature_fahrenheit = celsius_to_fahrenheit(temperature_celsius)
 
-            # Convert units based on config settings
-            if config.UNITS.lower() == "imperial":
-                temp = (temp_c * 9.0 / 5.0) + 32.0  # Celsius to Fahrenheit
-                pressure = pressure_hpa * 0.02953    # hPa to inHg
-            else:
-                temp = temp_c                         # Celsius
-                pressure = pressure_hpa               # hPa
+        # Print the readings
+        print("Temperature: {:.2f} °C, {:.2f} °F".format(temperature_celsius, temperature_fahrenheit))
+        print("Pressure: {:.2f} hPa".format(pressure))
+        print("Humidity: {:.2f} %".format(humidity))
 
-            return {
-                "temperature": round(temp, 1),
-                "humidity": round(humidity, 1),
-                "pressure": round(pressure, 1),
-                "status": True
-            }
+        # Wait for a few seconds before the next reading
+        time.sleep(2)
 
-        except Exception as error:
-            print(f"Failed to read data from BME280: {error}")
-            return {
-                "temperature": 0.0,
-                "humidity": 0.0,
-                "pressure": 0.0,
-                "status": False
-            }
-
-
-# ==========================================
-# STANDALONE TEST RUNNER
-# ==========================================
-if __name__ == "__main__":
-    print("Testing BME280 Sensor...")
-    bme = BME280Sensor()
-    
-    # Take a reading
-    data = bme.read_data()
-    
-    if data["status"]:
-        unit_temp = "°F" if config.UNITS == "imperial" else "°C"
-        unit_press = "inHg" if config.UNITS == "imperial" else "hPa"
-        
-        print("\n--- BME280 Reading Success ---")
-        print(f"Temperature : {data['temperature']}{unit_temp}")
-        print(f"Humidity    : {data['humidity']}%")
-        print(f"Pressure    : {data['pressure']} {unit_press}")
-    else:
-        print("\nFailed to get valid sensor readings. Check wiring and i2cdetect.")
+    except KeyboardInterrupt:
+        print('Program stopped')
+        break
+    except Exception as e:
+        print('An unexpected error occurred:', str(e))
+        break
