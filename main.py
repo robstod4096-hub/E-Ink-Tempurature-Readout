@@ -16,6 +16,6 @@ draw = ImageDraw.Draw(image)
 
 while True:
         epd.init()
-        draw.text((60, 15), read_sensor_data()['temperature_fahrenheit'], font=font, fill=0)
+        draw.text((60, 15), read_sensor_data()['temperature_fahrenheit'], fill=0)
         epd.sleep()
         time.sleep(60)  # Update every 60 seconds
