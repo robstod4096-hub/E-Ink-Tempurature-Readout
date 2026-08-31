@@ -11,8 +11,9 @@ from waveshare_epd import epd2in13b_V4
 epd = epd2in13b_V4.EPD()
 epd.init()
 epd.Clear()
-image = Image.new('1', (epd.width, epd.height), 255)
-draw = ImageDraw.Draw(image)
+image_black = Image.new('1', (epd.width, epd.height), 255)
+image_red = Image.new('1', (epd.width, epd.height), 255)
+draw = ImageDraw.Draw(image_black)
 
 while True:
         epd.init()
@@ -24,6 +25,6 @@ while True:
         draw.text((10, 10), f"Temperature: {temperature_celsius:.2f} °C / {temperature_fahrenheit:.2f} °F", fill=0)
         draw.text((10, 30), f"Pressure: {pressure:.2f} hPa", fill=0)
         draw.text((10, 50), f"Humidity: {humidity:.2f} %", fill=0)
-        epd.display(epd.getbuffer(image))
+        epd.display(epd.getbuffer(image_black, image_red))
         epd.sleep()
         time.sleep(60)  # Update every 60 seconds
