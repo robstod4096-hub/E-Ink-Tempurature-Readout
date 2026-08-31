@@ -5,11 +5,11 @@ from PIL import Image, ImageDraw, ImageFont
 
 # Point Python to the 'lib' folder inside the cloned repo
 sys.path.append(os.path.join(os.path.dirname(__file__), 'lib'))
-from tp_epd import epd2in13bc  # Use 'bc' for Black/Color (Red/Yellow) models
+from waveshare_epd import epd2in13b_V4  # Use 'bc' for Black/Color (Red/Yellow) models
 
 try:
     # Initialize the display
-    epd = epd2in13bc.EPD()
+    epd = epd2in13b_V4.EPD()
     epd.init()
     epd.Clear()
 
@@ -38,5 +38,5 @@ try:
 except IOError as e:
     print(e)
 except KeyboardInterrupt:
-    epd2in13bc.epdconfig.module_exit()
+    epd2in13b_V4.epdconfig.module_exit()
     exit()
