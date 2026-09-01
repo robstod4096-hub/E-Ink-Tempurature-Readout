@@ -15,10 +15,13 @@ print("Initializing display...")
 epd = epd2in13b_V4.EPD()
 epd.init()
 epd.Clear()
+
+# Prepare canvas for drawing
 image_black = Image.new('1', (epd.height, epd.width), 255)
 image_red = Image.new('1', (epd.height, epd.width), 255)
 draw_black = ImageDraw.Draw(image_black)
 draw_red = ImageDraw.Draw(image_red)
+font = ImageFont.truetype("11S01BlackTuesday-6yYD.ttf", 20)
 
 # Initialize button on pin 36 (GPIO 16)
 button = Button(16)
@@ -45,10 +48,16 @@ def update_display():
         
                         # Draw data on canvas
                         draw_black.rectangle((0, 0, epd.height, epd.width), fill=255)
-                        draw_red.rectangle((123, 0, 128, epd.width), fill=0, outline="black")
-                        draw_black.text((5, 10), f"Temperature: {temperature:.2f} {symbol}", fill=0)
+                        draw_black.rectangle((123, 0, 128, epd.width), fill=0) # Divider line
+
+                        # Left Side: Temperature, Pressure, Humidity
+                        draw_red.text((5, 100), "Indoor Conditions", fill=0)
+                        draw_black.text((10, 10), f"{temperature:.2f} {symbol}", fill=0, font=font)
                         draw_black.text((5, 30), f"Pressure: {pressure:.2f} hPa", fill=0)
                         draw_black.text((5, 50), f"Humidity: {humidity:.2f} %", fill=0)
+
+                        # Right Side: Outdoor Conditions
+                        draw_red.text((135, 100), "Outdoor Conditions", fill=0)
 
                         # Rotate canvas from portrait to landscape
                         image_black_rotated = image_black.rotate(90, expand=True)
