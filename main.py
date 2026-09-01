@@ -11,6 +11,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), 'e-Paper/RaspberryPi_Jet
 from waveshare_epd import epd2in13b_V4
 
 # Initialize the display and clear it
+print("Initializing display...")
 epd = epd2in13b_V4.EPD()
 epd.init()
 epd.Clear()
@@ -29,6 +30,8 @@ with open("config.toml", "rb") as f:
     data = tomllib.load(f)
 
 def update_display():
+                        print("Updating display...")
+
                         # Wake up display
                         epd.init()
         
@@ -44,7 +47,7 @@ def update_display():
         
                         # Draw data on canvas
                         draw_black.rectangle((0, 0, epd.height, epd.width), fill=255)
-                        draw_red.rectangle((125, 0, 122, 5), fill="red", outline="black")
+                        draw_red.rectangle((123, 0, 128, epd.width), fill="red", outline="black")
                         draw_black.text((5, 10), f"Temperature: {temperature:.2f} {symbol}", fill=0)
                         draw_black.text((5, 30), f"Pressure: {pressure:.2f} hPa", fill=0)
                         draw_black.text((5, 50), f"Humidity: {humidity:.2f} %", fill=0)
