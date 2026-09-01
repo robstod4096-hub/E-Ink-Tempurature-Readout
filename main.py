@@ -17,10 +17,8 @@ epd.init()
 epd.Clear()
 image_black = Image.new('1', (epd.height, epd.width), 255)
 image_red = Image.new('1', (epd.height, epd.width), 255)
-image_yellow = Image.new('1', (epd.height, epd.width), 255)
 draw_black = ImageDraw.Draw(image_black)
 draw_red = ImageDraw.Draw(image_red)
-draw_yellow = ImageDraw.Draw(image_yellow)
 
 # Initialize button on pin 36 (GPIO 16)
 button = Button(16)
@@ -55,13 +53,11 @@ def update_display():
                         # Rotate canvas from portrait to landscape
                         image_black_rotated = image_black.rotate(90, expand=True)
                         image_red_rotated = image_red.rotate(90, expand=True)
-                        image_yellow_rotated = image_yellow.rotate(90, expand=True)
         
                         # Push canvas to display
                         epd.display(
                                 epd.getbuffer(image_black_rotated), 
                                 epd.getbuffer(image_red_rotated),
-                                epd.getbuffer(image_yellow_rotated)
                                 )
         
                         # Put screen to sleep and wait to run again
