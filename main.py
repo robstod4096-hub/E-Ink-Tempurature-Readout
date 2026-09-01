@@ -65,9 +65,12 @@ def update_display():
 
 while True:
         update_display()
-        for i in range(900):
-                if button.ispressed():
+        time_remaining = data["general"]["update_interval"]
+        for i in range(data["general"]["update_interval"]):
+                if button.is_pressed():
                         update_display()
                         time.sleep(1)
                 else:
                         time.sleep(1)
+                time_remaining -= 1
+                print(f"Time remaining until next update: {time_remaining} seconds", end="\r")

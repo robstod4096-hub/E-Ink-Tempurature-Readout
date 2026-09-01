@@ -4,3 +4,4 @@ title = "E-Ink-Temperature-Readout"
 
 [general]
 units = "fahrenheit"
+update_interval = 900
