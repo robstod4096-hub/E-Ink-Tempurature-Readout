@@ -67,7 +67,7 @@ while True:
         update_display()
         time_remaining = data["general"]["update_interval"]
         for i in range(data["general"]["update_interval"]):
-                if button.is_pressed():
+                if button.is_pressed:
                         update_display()
                         time.sleep(1)
                 else:
