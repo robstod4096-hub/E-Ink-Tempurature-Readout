@@ -28,7 +28,7 @@ with open("config.toml", "rb") as f:
     data = tomllib.load(f)
 
 def update_display():
-                        print("Updating display...")
+                        print("\nUpdating display...")
 
                         # Wake up display
                         epd.init()
@@ -45,7 +45,7 @@ def update_display():
         
                         # Draw data on canvas
                         draw_black.rectangle((0, 0, epd.height, epd.width), fill=255)
-                        draw_red.rectangle((123, 0, 128, epd.width), fill="red", outline="black")
+                        draw_red.rectangle((123, 0, 128, epd.width), fill="0", outline="black")
                         draw_black.text((5, 10), f"Temperature: {temperature:.2f} {symbol}", fill=0)
                         draw_black.text((5, 30), f"Pressure: {pressure:.2f} hPa", fill=0)
                         draw_black.text((5, 50), f"Humidity: {humidity:.2f} %", fill=0)
@@ -69,8 +69,8 @@ while True:
         for i in range(data["general"]["update_interval"]):
                 if button.is_pressed:
                         update_display()
-                        time.sleep(1)
+                        time_remaining = data["general"]["update_interval"] + 1
                 else:
                         time.sleep(1)
                 time_remaining -= 1
-                print(f"Time remaining until next update: {time_remaining} seconds", end="\r")
+                print(f"Time remaining until next update: {time_remaining} seconds. Press button to update now.", end="\r")
