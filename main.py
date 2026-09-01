@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+from gpiozero import button
 from PIL import Image, ImageDraw, ImageFont
 from bme280_sensor import read_sensor_data
 
@@ -36,4 +37,4 @@ while True:
                 )
         
         epd.sleep()
-        time.sleep(60)  # Update every 60 seconds
+        time.sleep(900)  # Update every 15 minutes (900 seconds)
