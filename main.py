@@ -45,7 +45,7 @@ def update_display():
         
                         # Draw data on canvas
                         draw_black.rectangle((0, 0, epd.height, epd.width), fill=255)
-                        draw_red.rectangle((123, 0, 128, epd.width), fill="0", outline="black")
+                        draw_red.rectangle((123, 0, 128, epd.width), fill=0, outline="black")
                         draw_black.text((5, 10), f"Temperature: {temperature:.2f} {symbol}", fill=0)
                         draw_black.text((5, 30), f"Pressure: {pressure:.2f} hPa", fill=0)
                         draw_black.text((5, 50), f"Humidity: {humidity:.2f} %", fill=0)
