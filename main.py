@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import tomllib
 from gpiozero import Button
 from PIL import Image, ImageDraw, ImageFont
 from bme280_sensor import read_sensor_data
@@ -15,33 +16,49 @@ epd.init()
 epd.Clear()
 image_black = Image.new('1', (epd.height, epd.width), 255)
 image_red = Image.new('1', (epd.height, epd.width), 255)
-draw = ImageDraw.Draw(image_black)
+image_yellow = Image.new('1', (epd.height, epd.width), 255)
+draw_black = ImageDraw.Draw(image_black)
+draw_red = ImageDraw.Draw(image_red)
+draw_yellow = ImageDraw.Draw(image_yellow)
 
 # Initialize button on pin 36 (GPIO 16)
 button = Button(16)
+
+# Open config file
+with open("config.toml", "rb") as f:
+    data = tomllib.load(f)
 
 def update_display():
                         # Wake up display
                         epd.init()
         
                         # Retrieve atmospheric data from sensor
-                        temperature_fahrenheit = read_sensor_data()['temperature_fahrenheit']
-                        temperature_celsius = read_sensor_data()['temperature_celsius']
+                        if data["general"]["units"] == "fahrenheit":
+                                temperature = read_sensor_data()['temperature_fahrenheit']
+                                symbol = "°F"
+                        elif data["general"]["units"] == "celsius":
+                                temperature = read_sensor_data()['temperature_celsius']
+                                symbol = "°C"
                         pressure = read_sensor_data()['pressure']
                         humidity = read_sensor_data()['humidity']
         
                         # Draw data on canvas
-                        draw.rectangle((0, 0, epd.height, epd.width), fill=255)
-                        draw.text((10, 10), f"Temperature: {temperature_celsius:.2f} °C / {temperature_fahrenheit:.2f} °F", fill=0)
-                        draw.text((10, 30), f"Pressure: {pressure:.2f} hPa", fill=0)
-                        draw.text((10, 50), f"Humidity: {humidity:.2f} %", fill=0)
+                        draw_black.rectangle((0, 0, epd.height, epd.width), fill=255)
+                        draw_red.rectangle((125, 0, 122, 5), fill="red", outline="black")
+                        draw_black.text((5, 10), f"Temperature: {temperature:.2f} {symbol}", fill=0)
+                        draw_black.text((5, 30), f"Pressure: {pressure:.2f} hPa", fill=0)
+                        draw_black.text((5, 50), f"Humidity: {humidity:.2f} %", fill=0)
+
+                        # Rotate canvas from portrait to landscape
                         image_black_rotated = image_black.rotate(90, expand=True)
                         image_red_rotated = image_red.rotate(90, expand=True)
+                        image_yellow_rotated = image_yellow.rotate(90, expand=True)
         
                         # Push canvas to display
                         epd.display(
                                 epd.getbuffer(image_black_rotated), 
-                                epd.getbuffer(image_red_rotated)
+                                epd.getbuffer(image_red_rotated),
+                                epd.getbuffer(image_yellow_rotated)
                                 )
         
                         # Put screen to sleep and wait to run again

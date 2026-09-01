@@ -1,0 +1,6 @@
+# Configuration file
+
+title = "E-Ink-Temperature-Readout"
+
+[general]
+units = "fahrenheit"
