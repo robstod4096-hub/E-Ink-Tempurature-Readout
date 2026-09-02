@@ -5,6 +5,7 @@ import tomllib
 from gpiozero import Button
 from PIL import Image, ImageDraw, ImageFont
 from bme280_sensor import read_sensor_data
+from weather_api import get_weather_data
 
 # Point Python to the 'lib' folder inside the cloned repo
 sys.path.append(os.path.join(os.path.dirname(__file__), 'e-Paper/RaspberryPi_JetsonNano/python/lib'))
@@ -45,6 +46,12 @@ def update_display():
                                 symbol = "°C"
                         pressure = read_sensor_data()['pressure']
                         humidity = read_sensor_data()['humidity']
+
+                        weather_data = get_weather_data()
+                        weather_temp = weather_data.get("temperature")
+                        weather_high = weather_data.get("high")
+                        weather_low = weather_data.get("low")
+                        weather_conditions = weather_data.get("conditions", "Unavailable")
         
                         # Draw data on canvas
                         draw_black.rectangle((0, 0, epd.height, epd.width), fill=255)
@@ -57,6 +64,13 @@ def update_display():
                         draw_red.text((5, 110), "Indoor Conditions", fill=0)
 
                         # Right Side: Outdoor Conditions
+                        if weather_temp is not None:
+                                draw_red.text((135, 10), f"{weather_temp:.0f} {symbol}", fill=0, font=font)
+                        draw_black.text((135, 70), f"Cond: {weather_conditions}", fill=0)
+                        if weather_high is not None:
+                                draw_black.text((135, 85), f"High: {weather_high:.0f} {symbol}", fill=0)
+                        if weather_low is not None:
+                                draw_black.text((135, 95), f"Low: {weather_low:.0f} {symbol}", fill=0)
                         draw_red.text((135, 110), "Outdoor Conditions", fill=0)
 
                         # Rotate canvas from portrait to landscape

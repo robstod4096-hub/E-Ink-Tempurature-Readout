@@ -5,3 +5,7 @@ title = "E-Ink-Temperature-Readout"
 [general]
 units = "fahrenheit"
 update_interval = 900
+
+[location]
+latitude = 40.2338
+longitude = -111.6585
