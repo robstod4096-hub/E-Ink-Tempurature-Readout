@@ -51,7 +51,7 @@ def update_display():
                         draw_black.rectangle((124, 0, 127, epd.width), fill=0) # Divider line
 
                         # Left Side: Temperature, Pressure, Humidity
-                        draw_black.text((20, 10), f"{temperature} {symbol}", fill=0, font=font)
+                        draw_red.text((20, 10), f"{temperature:.0f} {symbol}", fill=0, font=font)
                         draw_black.text((5, 80), f"Humidity: {humidity:.2f} %", fill=0)
                         draw_black.text((5, 90), f"Pressure: {pressure:.2f} hPa", fill=0)
                         draw_red.text((5, 100), "Indoor Conditions", fill=0)
