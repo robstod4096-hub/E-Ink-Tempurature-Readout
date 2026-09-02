@@ -39,16 +39,16 @@ def update_display():
                         # Retrieve atmospheric data from sensor
                         if data["general"]["units"] == "fahrenheit":
                                 temperature = read_sensor_data()['temperature_fahrenheit']
-                                symbol = "° F"
+                                symbol = "°F"
                         elif data["general"]["units"] == "celsius":
                                 temperature = read_sensor_data()['temperature_celsius']
-                                symbol = "° C"
+                                symbol = "°C"
                         pressure = read_sensor_data()['pressure']
                         humidity = read_sensor_data()['humidity']
         
                         # Draw data on canvas
                         draw_black.rectangle((0, 0, epd.height, epd.width), fill=255)
-                        draw_black.rectangle((124, 0, 127, epd.width), fill=0) # Divider line
+                        draw_black.rectangle((124, 0, 125, epd.width), fill=0) # Divider line
 
                         # Left Side: Temperature, Pressure, Humidity
                         draw_red.text((20, 10), f"{temperature:.0f} {symbol}", fill=0, font=font)
@@ -57,7 +57,7 @@ def update_display():
                         draw_red.text((5, 110), "Indoor Conditions", fill=0)
 
                         # Right Side: Outdoor Conditions
-                        draw_red.text((135, 100), "Outdoor Conditions", fill=0)
+                        draw_red.text((135, 110), "Outdoor Conditions", fill=0)
 
                         # Rotate canvas from portrait to landscape
                         image_black_rotated = image_black.rotate(90, expand=True)
