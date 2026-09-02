@@ -21,7 +21,7 @@ image_black = Image.new('1', (epd.height, epd.width), 255)
 image_red = Image.new('1', (epd.height, epd.width), 255)
 draw_black = ImageDraw.Draw(image_black)
 draw_red = ImageDraw.Draw(image_red)
-font = ImageFont.truetype("11S01BlackTuesday-6yYD.ttf", 20)
+font = ImageFont.truetype("11S01BlackTuesday-6yYD.ttf", 40)
 
 # Initialize button on pin 36 (GPIO 16)
 button = Button(16)
@@ -39,22 +39,22 @@ def update_display():
                         # Retrieve atmospheric data from sensor
                         if data["general"]["units"] == "fahrenheit":
                                 temperature = read_sensor_data()['temperature_fahrenheit']
-                                symbol = "°F"
+                                symbol = "° F"
                         elif data["general"]["units"] == "celsius":
                                 temperature = read_sensor_data()['temperature_celsius']
-                                symbol = "°C"
+                                symbol = "° C"
                         pressure = read_sensor_data()['pressure']
                         humidity = read_sensor_data()['humidity']
         
                         # Draw data on canvas
                         draw_black.rectangle((0, 0, epd.height, epd.width), fill=255)
-                        draw_black.rectangle((123, 0, 128, epd.width), fill=0) # Divider line
+                        draw_black.rectangle((124, 0, 127, epd.width), fill=0) # Divider line
 
                         # Left Side: Temperature, Pressure, Humidity
+                        draw_black.text((20, 10), f"{temperature} {symbol}", fill=0, font=font)
+                        draw_black.text((5, 80), f"Humidity: {humidity:.2f} %", fill=0)
+                        draw_black.text((5, 90), f"Pressure: {pressure:.2f} hPa", fill=0)
                         draw_red.text((5, 100), "Indoor Conditions", fill=0)
-                        draw_black.text((10, 10), f"{temperature:.2f} {symbol}", fill=0, font=font)
-                        draw_black.text((5, 30), f"Pressure: {pressure:.2f} hPa", fill=0)
-                        draw_black.text((5, 50), f"Humidity: {humidity:.2f} %", fill=0)
 
                         # Right Side: Outdoor Conditions
                         draw_red.text((135, 100), "Outdoor Conditions", fill=0)
